@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Reviews
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A practice React project bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
@@ -11,60 +11,152 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Development Log
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Project Setup
 
-### `npm run eject`
+- `data.js` - project data
+- `index.css` - global styles
+- `npm install react-icons`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Basic Setup
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- inside `App.js`, we have
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```jsx
+import Review from "./Review";
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+function App() {
+  return (
+    <main>
+      <section className="container">
+        <div className="title">
+          <h2>Our Reviews</h2>
+          <div className="underline"></div>
+        </div>
+        <Review />
+      </section>
+    </main>
+  );
+}
 
-## Learn More
+export default App;
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- create `Review.js`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```jsx
+import { useState } from "react";
+import people from "./data";
+import { FaChevronLeft, FaChevronRight, FaQuoteRight } from "react-icons/fa";
 
-### Code Splitting
+const Review = () => {
+  const [index, setIndex] = useState(0);
+  const { name, job, image, text } = people[index];
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  return (
+    <article className="review">
+      <div className="img-container">
+        <img src={image} alt={name} className="person-img" />
+        <span className="quote-icon">
+          <FaQuoteRight />
+        </span>
+      </div>
+      <h4 className="author">{name}</h4>
+      <p className="job">{job}</p>
+      <p className="info">{text}</p>
+      <div className="button-container">
+        <button className="prev-btn">
+          <FaChevronLeft />
+        </button>
+        <button className="next-btn">
+          <FaChevronRight />
+        </button>
+      </div>
+      <button className="random-btn">surprise me</button>
+    </article>
+  );
+};
 
-### Analyzing the Bundle Size
+export default Review;
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Prev and Next
 
-### Making a Progressive Web App
+- inside `Review.js`, we have
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```jsx
+// ...
 
-### Advanced Configuration
+const Review = () => {
+  const [index, setIndex] = useState(0);
+  const { name, job, image, text } = people[index];
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  const checkNumber = (number) => {
+    if (number > people.length - 1) {
+      return 0;
+    }
+    if (number < 0) {
+      return people.length - 1;
+    }
+    return number;
+  };
 
-### Deployment
+  const prevPerson = () => {
+    setIndex((prevIndex) => checkNumber(prevIndex - 1));
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  const nextPerson = () => {
+    setIndex((prevIndex) => checkNumber(prevIndex + 1));
+  };
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  return (
+    // ...
+        <button className="prev-btn" onClick={prevPerson}>
+          <FaChevronLeft />
+        </button>
+        <button className="next-btn" onClick={nextPerson}>
+          <FaChevronRight />
+        </button>
+    // ...
+  );
+};
+
+export default Review;
+```
+
+### Random
+
+- inside `Review.js`, we have
+
+```jsx
+// ...
+
+const Review = () => {
+  // ...
+
+  const randomPerson = () => {
+    let randomNumber = Math.floor(Math.random() * people.length);
+    if (randomNumber === index) {
+      randomNumber += 1;
+    }
+    setIndex(checkNumber(randomNumber));
+  };
+
+  return (
+    // ...
+    <button className="random-btn" onClick={randomPerson}>
+      surprise me
+    </button>
+    // ...
+  );
+};
+
+export default Review;
+```
